@@ -36,11 +36,11 @@ percentile_lines = alt.Chart(percentiles_df).mark_rule(color='black').encode(
 # Add labels for each percentile line
 percentile_labels = percentile_lines.mark_text(
     align='left',
-    dx=1,  # Distance from the right edge
+    dx=.1,  # Distance from the right edge
     dy=-5,  # Distance above the line
     text='Label:N'
 ).encode(
-    x=alt.value(570),  # Adjust this value based on the plot width or container width
+    x=alt.value(100),  # Adjust this value based on the plot width or container width
     y='Percentile:Q',
     text='Label:N'
 )
