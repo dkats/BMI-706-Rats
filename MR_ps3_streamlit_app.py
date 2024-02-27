@@ -40,7 +40,7 @@ percentile_labels = percentile_lines.mark_text(
     dy=-5,
     text='Label:N'
 ).encode(
-    x=alt.value(345),
+    x=alt.value(344.5),
     y='Percentile:Q',
     text='Label:N'
 )
