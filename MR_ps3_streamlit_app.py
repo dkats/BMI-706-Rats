@@ -61,7 +61,7 @@ chart = alt.layer(
 ).properties(
     title='Blood Pressure Percentiles by Age',
     width='container',
-    height=300
+    height=350
 ).configure_view(
     strokeWidth=0
 ).configure_axis(
