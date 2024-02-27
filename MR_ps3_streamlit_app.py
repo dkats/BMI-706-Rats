@@ -27,8 +27,8 @@ data = pd.DataFrame({
 
 # Create the Altair chart
 chart = alt.Chart(data).mark_point().encode(
-    x=alt.X('Age:Q', title='Age (years)'),
-    y=alt.Y('Percentile:Q', title='Blood Pressure Percentile'),
+    x=alt.X('Age:Q', title='Age (years)', scale=alt.Scale(domain=(0, 13))),
+    y=alt.Y('Percentile:Q', title='Blood Pressure Percentile', scale=alt.Scale(domain=(0, 100))),
     color=alt.Color('Type:N', title='Blood Pressure Type'),
     tooltip=['Type', 'Percentile']
 ).properties(
