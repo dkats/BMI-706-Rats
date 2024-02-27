@@ -40,7 +40,7 @@ percentile_labels = percentile_lines.mark_text(
     dy=-5,  # Distance above the line
     text='Label:N'
 ).encode(
-    x=alt.value(570),  # Adjust this value to align with the right margin
+    x=alt.value(565),  # Adjust this value to align with the right margin
     y='Percentile:Q',
     text='Label:N'
 )
