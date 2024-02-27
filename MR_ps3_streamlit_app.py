@@ -40,7 +40,7 @@ percentile_labels = percentile_lines.mark_text(
     dy=-5,  # Distance above the line
     text='Label:N'
 ).encode(
-    x=alt.value(310),  # Adjust this value based on the plot width or container width
+    x=alt.value(350),  # Adjust this value based on the plot width or container width
     y='Percentile:Q',
     text='Label:N'
 )
@@ -65,8 +65,8 @@ chart = alt.layer(
 ).configure_view(
     strokeWidth=0
 ).configure_axis(
-    labelPadding=10,
-    titlePadding=10,
+    labelPadding=5,
+    titlePadding=5,
     grid=False
 )
 
