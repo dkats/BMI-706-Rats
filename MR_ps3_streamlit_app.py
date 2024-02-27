@@ -12,24 +12,22 @@ height = st.number_input('Enter height (inches):', min_value=0, value=50)
 systolic_bp = st.number_input('Enter systolic blood pressure (mmHg):', min_value=0, value=96)
 diastolic_bp = st.number_input('Enter diastolic blood pressure (mmHg):', min_value=0, value=60)
 
-# Assuming that there is a function to calculate the percentile
-# For now, we are just taking the provided percentiles as they are
-# In a real scenario, you would calculate the percentiles based on the inputs
-systolic_percentile = systolic_bp - 50/height   # Placeholder, replace with your calculation
-diastolic_percentile = diastolic_bp - 50/height # Placeholder, replace with your calculation
+# Placeholder values for the percentiles
+systolic_percentile = 51  # Example value
+diastolic_percentile = 56  # Example value
 
-# Create a DataFrame with the calculated percentiles
+# Ensure the order in the DataFrame matches the desired legend order
 data = pd.DataFrame({
-    'Age': [age, age],  # X-axis
-    'Percentile': [systolic_percentile, diastolic_percentile],  # Y-axis
-    'Type': ['Systolic BP', 'Diastolic BP']  # Color/legend
+    'Age': [age, age],
+    'Percentile': [systolic_percentile, diastolic_percentile],
+    'Type': ['Systolic BP', 'Diastolic BP']
 })
 
-# Create the Altair chart
+# Create the Altair chart with explicit sorting for the legend
 chart = alt.Chart(data).mark_point().encode(
     x=alt.X('Age:Q', title='Age (years)', scale=alt.Scale(domain=(0, 13))),
-    y=alt.Y('Percentile:Q', title='Blood Pressure Percentile', scale=alt.Scale(domain=(0, 100))),
-    color=alt.Color('Type:N', legend=alt.Legend(title='')),
+    y=alt.Y('Percentile:Q', title='Percentile', scale=alt.Scale(domain=(0, 100))),
+    color=alt.Color('Type:N', legend=alt.Legend(title=''), sort=['Systolic BP', 'Diastolic BP']),
     tooltip=['Type', 'Percentile']
 ).properties(
     title='Blood Pressure Percentiles by Age'
