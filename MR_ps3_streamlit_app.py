@@ -8,13 +8,20 @@ st.title('Blood Pressure Percentiles')
 # User inputs
 sex = st.radio('Select sex:', ('Male', 'Female'))
 age = st.slider('Select age (years):', min_value=0, max_value=13, value=10)
-height = st.number_input('Enter height (cm):', min_value=0, value=50)
+height = st.number_input('Enter height (inches):', min_value=0, value=50)
 systolic_bp = st.number_input('Enter systolic blood pressure (mmHg):', min_value=0, value=96)
 diastolic_bp = st.number_input('Enter diastolic blood pressure (mmHg):', min_value=0, value=60)
 
 # Placeholder values for the percentiles
 systolic_percentile = 51  # Example value
 diastolic_percentile = 56  # Example value
+
+# Data for the chart
+data = pd.DataFrame({
+    'Age': [age, age],
+    'Percentile': [systolic_percentile, diastolic_percentile],
+    'Type': ['Systolic BP', 'Diastolic BP']
+})
 
 # Base chart for points
 points = alt.Chart(data).mark_point().encode(
@@ -54,7 +61,7 @@ chart = alt.layer(
     hline_90, text_90,
     hline_95, text_95
 ).properties(
-    title='Blood Pressure Percentiles by Age',
+    title='Blood Pressure Percentiles',
     width='container',
     height=300
 ).configure_view(
