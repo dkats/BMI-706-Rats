@@ -32,7 +32,7 @@ chart = alt.Chart(data).mark_point().encode(
 ).properties(
     title='Blood Pressure Percentiles by Age',
     width='container',
-    height=300  # Adjust height to ensure space for the x-axis label
+    height=400  # Adjust height to ensure space for the x-axis label
 ).configure_view(
     strokeWidth=0
 ).configure_axis(
