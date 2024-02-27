@@ -23,6 +23,9 @@ data = pd.DataFrame({
     'Type': ['Systolic BP', 'Diastolic BP']
 })
 
+# Maximum age value for positioning the text on the far right
+max_age = data['Age'].max()
+
 # Base chart for points
 points = alt.Chart(data).mark_point().encode(
     x=alt.X('Age:Q', title='Age (years)', scale=alt.Scale(domain=(0, 13))),
@@ -32,20 +35,21 @@ points = alt.Chart(data).mark_point().encode(
 )
 
 # Function to create horizontal line and text for a given percentile
-def percentile_line_and_text(percentile, color='black'):
-    hline = alt.Chart(pd.DataFrame({'Percentile': [percentile]})).mark_rule(color=color).encode(
+def percentile_line_and_text(percentile):
+    hline = alt.Chart(pd.DataFrame({'Percentile': [percentile]})).mark_rule(color='black').encode(
         y='Percentile:Q'
     )
-    text = alt.Chart(pd.DataFrame({'Percentile': [percentile], 'Age': [0]})).mark_text(
-        align='left',
-        baseline='middle',
-        dx=-5,  # Adjust x-position of the text towards the chart's left edge
+    # Positioning the text at the far right based on the maximum age and slightly above the line
+    text = alt.Chart(pd.DataFrame({'Percentile': [percentile], 'Age': [max_age]})).mark_text(
+        align='right',
+        baseline='bottom',
+        dx=5,  # Slight adjustment to avoid overlapping with the plot's edge
+        dy=-5,  # Raise the text above the line
         text=f'{percentile}th',
-        fontSize=12,
-        color=color
+        fontSize=12
     ).encode(
-        y='Percentile:Q',  # Y-position of the text based on the percentile
-        x='Age:Q'  # Start of the x-axis
+        y='Percentile:Q',
+        x='Age:Q'
     )
     return hline, text
 
@@ -67,8 +71,8 @@ chart = alt.layer(
 ).configure_view(
     strokeWidth=0
 ).configure_axis(
-    labelPadding=5,
-    titlePadding=5,
+    labelPadding=10,
+    titlePadding=10,
     grid=False  # Disable grid lines
 )
 
