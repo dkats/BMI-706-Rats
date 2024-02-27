@@ -12,9 +12,31 @@ height = st.number_input('Enter height (cm):', min_value=0, value=50)
 systolic_bp = st.number_input('Enter systolic blood pressure (mmHg):', min_value=0, value=96)
 diastolic_bp = st.number_input('Enter diastolic blood pressure (mmHg):', min_value=0, value=60)
 
-# Placeholder values for the percentiles
-systolic_percentile = 51  # Example value
-diastolic_percentile = 56  # Example value
+# Hypothetical calculation for systolic and diastolic BP percentiles
+# NOTE: This is a simplified and hypothetical example
+def calculate_percentile(age, height, bp, bp_type="systolic"):
+    # Hypothetical reference values (mean) based on age and height for systolic and diastolic
+    reference_systolic = 90 + (age * 2) + (height * 0.1)
+    reference_diastolic = 60 + (age * 1.5) + (height * 0.05)
+    
+    # Calculate deviation from reference value
+    if bp_type == "systolic":
+        deviation = bp - reference_systolic
+    else:
+        deviation = bp - reference_diastolic
+    
+    # Simplified percentile calculation (not statistically accurate)
+    percentile = 50 + (deviation * 2)  # Assuming every 1 mmHg deviation shifts percentile by 2%
+    percentile = np.clip(percentile, 0, 100)  # Ensure percentile is between 0 and 100
+    return percentile
+
+# Calculate percentiles
+systolic_percentile = calculate_percentile(age, height, systolic_bp, "systolic")
+diastolic_percentile = calculate_percentile(age, height, diastolic_bp, "diastolic")
+
+# Display calculated percentiles
+st.write(f"Systolic Blood Pressure Percentile: {systolic_percentile:.2f}%")
+st.write(f"Diastolic Blood Pressure Percentile: {diastolic_percentile:.2f}%")
 
 # Data for the chart
 data = pd.DataFrame({
