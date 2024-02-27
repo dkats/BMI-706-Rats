@@ -23,8 +23,27 @@ data = pd.DataFrame({
     'Type': ['Systolic BP', 'Diastolic BP']
 })
 
-# Maximum age value for positioning the text on the far right
-max_age = data['Age'].max()
+# Define horizontal lines for the 50th, 90th, and 95th percentiles
+percentiles_df = pd.DataFrame({
+    'Percentile': [50, 90, 95],
+    'Label': ['50th', '90th', '95th']
+})
+
+percentile_lines = alt.Chart(percentiles_df).mark_rule(color='black').encode(
+    y='Percentile:Q'
+)
+
+# Add labels for each percentile line
+percentile_labels = percentile_lines.mark_text(
+    align='left',
+    dx=5,  # Distance from the right edge
+    dy=-5,  # Distance above the line
+    text='Label:N'
+).encode(
+    x=alt.value(570),  # Adjust this value based on the plot width or container width
+    y='Percentile:Q',
+    text='Label:N'
+)
 
 # Base chart for points
 points = alt.Chart(data).mark_point().encode(
@@ -34,36 +53,11 @@ points = alt.Chart(data).mark_point().encode(
     tooltip=['Type', 'Percentile']
 )
 
-# Function to create horizontal line and text for a given percentile
-def percentile_line_and_text(percentile):
-    hline = alt.Chart(pd.DataFrame({'Percentile': [percentile]})).mark_rule(color='black').encode(
-        y='Percentile:Q'
-    )
-    # Positioning the text at the far right based on the maximum age and slightly above the line
-    text = alt.Chart(pd.DataFrame({'Percentile': [percentile], 'Age': [max_age]})).mark_text(
-        align='right',
-        baseline='bottom',
-        dx=5,  # Slight adjustment to avoid overlapping with the plot's edge
-        dy=-5,  # Raise the text above the line
-        text=f'{percentile}th',
-        fontSize=12
-    ).encode(
-        y='Percentile:Q',
-        x='Age:Q'
-    )
-    return hline, text
-
-# Creating lines and texts for 50th, 90th, and 95th percentiles
-hline_50, text_50 = percentile_line_and_text(50)
-hline_90, text_90 = percentile_line_and_text(90)
-hline_95, text_95 = percentile_line_and_text(95)
-
-# Layering the charts
+# Combine all chart layers
 chart = alt.layer(
     points, 
-    hline_50, text_50,
-    hline_90, text_90,
-    hline_95, text_95
+    percentile_lines, 
+    percentile_labels
 ).properties(
     title='Blood Pressure Percentiles by Age',
     width='container',
@@ -73,7 +67,7 @@ chart = alt.layer(
 ).configure_axis(
     labelPadding=10,
     titlePadding=10,
-    grid=False  # Disable grid lines
+    grid=False
 )
 
 # Display the chart in Streamlit
