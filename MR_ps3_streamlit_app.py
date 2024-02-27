@@ -59,7 +59,7 @@ chart = alt.layer(
     percentile_lines, 
     percentile_labels
 ).properties(
-    title='Blood Pressure Percentiles by Age',
+    title='',
     width='container',
     height=350
 ).configure_view(
