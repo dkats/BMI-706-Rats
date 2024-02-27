@@ -15,8 +15,8 @@ diastolic_bp = st.number_input('Enter diastolic blood pressure (mmHg):', min_val
 # Assuming that there is a function to calculate the percentile
 # For now, we are just taking the provided percentiles as they are
 # In a real scenario, you would calculate the percentiles based on the inputs
-systolic_percentile = systolic_bp - 50   # Placeholder, replace with your calculation
-diastolic_percentile = diastolic_bp - 50 # Placeholder, replace with your calculation
+systolic_percentile = systolic_bp - 50/height   # Placeholder, replace with your calculation
+diastolic_percentile = diastolic_bp - 50/height # Placeholder, replace with your calculation
 
 # Create a DataFrame with the calculated percentiles
 data = pd.DataFrame({
@@ -29,7 +29,7 @@ data = pd.DataFrame({
 chart = alt.Chart(data).mark_point().encode(
     x=alt.X('Age:Q', title='Age (years)', scale=alt.Scale(domain=(0, 13))),
     y=alt.Y('Percentile:Q', title='Blood Pressure Percentile', scale=alt.Scale(domain=(0, 100))),
-    color=alt.Color('Type:N', title='Blood Pressure Type'),
+    color=alt.Color('Type:N', title='Blood Pressure'),
     tooltip=['Type', 'Percentile']
 ).properties(
     title='Blood Pressure Percentiles by Age'
