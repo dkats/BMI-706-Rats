@@ -29,7 +29,7 @@ percentiles_df = pd.DataFrame({
     'Label': ['50th', '90th', '95th']
 })
 
-percentile_lines = alt.Chart(percentiles_df).mark_rule(color='black').encode(
+percentile_lines = alt.Chart(percentiles_df).mark_rule(color='black', size=2).encode(  # Set size to control line thickness
     y='Percentile:Q'
 )
 
