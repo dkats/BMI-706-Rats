@@ -32,12 +32,12 @@ chart = alt.Chart(data).mark_point().encode(
 ).properties(
     title='Blood Pressure Percentiles by Age',
     width='container',
-    height=500  # Adjust height to ensure space for the x-axis label
+    height=300  # Adjust height to ensure space for the x-axis label
 ).configure_view(
     strokeWidth=0
 ).configure_axis(
-    labelPadding=10,  # Adds padding to the axis labels
-    titlePadding=10  # Adds padding to the axis titles
+    labelPadding=20,  # Adds padding to the axis labels
+    titlePadding=20  # Adds padding to the axis titles
 )
 
 # Display the chart in Streamlit
