@@ -34,4 +34,4 @@ chart = alt.Chart(data).mark_point().encode(
 )
 
 # Display the chart in Streamlit
-st.altair_chart(chart, use_container_width=F)
+st.altair_chart(chart, use_container_width=True)
