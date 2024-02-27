@@ -36,15 +36,16 @@ def percentile_line_and_text(percentile, color='black'):
     hline = alt.Chart(pd.DataFrame({'Percentile': [percentile]})).mark_rule(color=color).encode(
         y='Percentile:Q'
     )
-    text = alt.Chart({'values':[{}]}).mark_text(
+    text = alt.Chart(pd.DataFrame({'Percentile': [percentile], 'Age': [0]})).mark_text(
         align='left',
         baseline='middle',
-        dx=7,  # Adjust x-position of the text
-        text=f'{percentile}th Percentile',
+        dx=-5,  # Adjust x-position of the text towards the chart's left edge
+        text=f'{percentile}th',
         fontSize=12,
         color=color
     ).encode(
-        y=alt.value(percentile)  # Y-position of the text
+        y='Percentile:Q',  # Y-position of the text based on the percentile
+        x='Age:Q'  # Start of the x-axis
     )
     return hline, text
 
@@ -66,9 +67,10 @@ chart = alt.layer(
 ).configure_view(
     strokeWidth=0
 ).configure_axis(
-    labelPadding=10,
-    titlePadding=10
-).configure_axis(grid=False)  # Disable grid lines
+    labelPadding=5,
+    titlePadding=5,
+    grid=False  # Disable grid lines
+)
 
 # Display the chart in Streamlit
 st.altair_chart(chart, use_container_width=True)
