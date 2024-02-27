@@ -30,7 +30,7 @@ chart = alt.Chart(data).mark_point().encode(
     color=alt.Color('Type:N', legend=alt.Legend(title=''), sort=['Systolic BP', 'Diastolic BP']),
     tooltip=['Type', 'Percentile']
 ).properties(
-    title='Blood Pressure Percentiles by Age',
+    title='Blood Pressure Percentiles',
     width='container',
     height=300  # Adjust height to ensure space for the x-axis label
 ).configure_view(
