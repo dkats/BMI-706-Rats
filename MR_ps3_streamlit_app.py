@@ -29,7 +29,7 @@ data = pd.DataFrame({
 chart = alt.Chart(data).mark_point().encode(
     x=alt.X('Age:Q', title='Age (years)', scale=alt.Scale(domain=(0, 13))),
     y=alt.Y('Percentile:Q', title='Blood Pressure Percentile', scale=alt.Scale(domain=(0, 100))),
-    color=alt.Color('Type:N'),
+    color=alt.Color('Type:N', legend=alt.Legend(title=''),
     tooltip=['Type', 'Percentile']
 ).properties(
     title='Blood Pressure Percentiles by Age'
