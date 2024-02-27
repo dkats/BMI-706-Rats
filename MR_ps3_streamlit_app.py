@@ -35,12 +35,12 @@ percentile_lines = alt.Chart(percentiles_df).mark_rule(color='black').encode(
 
 # Add labels for each percentile line
 percentile_labels = percentile_lines.mark_text(
-    align='right',  # Adjust alignment to right
-    dx=-2,  # Distance from the right edge, adjust as needed
-    dy=-5,  # Distance above the line
+    align='right',
+    dx=-2,
+    dy=-5,
     text='Label:N'
 ).encode(
-    x=alt.value(565),  # Adjust this value to align with the right margin
+    x=alt.value(565),
     y='Percentile:Q',
     text='Label:N'
 )
@@ -49,7 +49,7 @@ percentile_labels = percentile_lines.mark_text(
 points = alt.Chart(data).mark_point().encode(
     x=alt.X('Age:Q', title='Age (years)', axis=alt.Axis(values=list(range(14))), scale=alt.Scale(domain=(0, 13))),
     y=alt.Y('Percentile:Q', title='Percentile', scale=alt.Scale(domain=(0, 100))),
-    color=alt.Color('Type:N', legend=alt.Legend(title='Type'), sort=['Systolic BP', 'Diastolic BP']),
+    color=alt.Color('Type:N', legend=alt.Legend(), sort=['Systolic BP', 'Diastolic BP']),  # Removed title='Type'
     tooltip=['Type', 'Percentile']
 )
 
