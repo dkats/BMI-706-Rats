@@ -32,15 +32,14 @@ points = alt.Chart(data).mark_point().encode(
 )
 
 # Function to create horizontal line and text for a given percentile
-def percentile_line_and_text(percentile, color):
-    hline = alt.Chart(pd.DataFrame({'Percentile': [percentile]})).mark_rule(strokeDash=[10, 10], color=color).encode(
+def percentile_line_and_text(percentile, color='black'):
+    hline = alt.Chart(pd.DataFrame({'Percentile': [percentile]})).mark_rule(color=color).encode(
         y='Percentile:Q'
     )
     text = alt.Chart({'values':[{}]}).mark_text(
         align='left',
         baseline='middle',
         dx=7,  # Adjust x-position of the text
-        dy=-5 + (percentile % 50) * 0.2,  # Slight adjustment based on percentile for spacing
         text=f'{percentile}th Percentile',
         fontSize=12,
         color=color
@@ -50,9 +49,9 @@ def percentile_line_and_text(percentile, color):
     return hline, text
 
 # Creating lines and texts for 50th, 90th, and 95th percentiles
-hline_50, text_50 = percentile_line_and_text(50, 'red')
-hline_90, text_90 = percentile_line_and_text(90, 'green')
-hline_95, text_95 = percentile_line_and_text(95, 'blue')
+hline_50, text_50 = percentile_line_and_text(50)
+hline_90, text_90 = percentile_line_and_text(90)
+hline_95, text_95 = percentile_line_and_text(95)
 
 # Layering the charts
 chart = alt.layer(
@@ -61,7 +60,7 @@ chart = alt.layer(
     hline_90, text_90,
     hline_95, text_95
 ).properties(
-    title='Blood Pressure Percentiles',
+    title='Blood Pressure Percentiles by Age',
     width='container',
     height=300
 ).configure_view(
@@ -69,7 +68,7 @@ chart = alt.layer(
 ).configure_axis(
     labelPadding=10,
     titlePadding=10
-)
+).configure_axis(grid=False)  # Disable grid lines
 
 # Display the chart in Streamlit
 st.altair_chart(chart, use_container_width=True)
