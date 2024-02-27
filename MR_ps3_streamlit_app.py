@@ -49,7 +49,7 @@ percentile_labels = percentile_lines.mark_text(
 points = alt.Chart(data).mark_point().encode(
     x=alt.X('Age:Q', title='Age (years)', axis=alt.Axis(values=list(range(14))), scale=alt.Scale(domain=(0, 13))),
     y=alt.Y('Percentile:Q', title='Percentile', scale=alt.Scale(domain=(0, 100))),
-    color=alt.Color('Type:N', legend=alt.Legend(title=''), sort=['Systolic BP', 'Diastolic BP']),
+    color=alt.Color('Type:N', legend=alt.Legend(title='Type'), sort=['Systolic BP', 'Diastolic BP']),
     tooltip=['Type', 'Percentile']
 )
 
