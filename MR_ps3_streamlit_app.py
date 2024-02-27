@@ -2,7 +2,7 @@ import altair as alt
 import pandas as pd
 import streamlit as st
 
-# Streamlit app
+# Streamlit app setup
 st.title('Blood Pressure Percentiles')
 
 # User inputs
@@ -16,14 +16,14 @@ diastolic_bp = st.number_input('Enter diastolic blood pressure (mmHg):', min_val
 systolic_percentile = 51  # Example value
 diastolic_percentile = 56  # Example value
 
-# Ensure the order in the DataFrame matches the desired legend order
+# Data for the chart
 data = pd.DataFrame({
     'Age': [age, age],
     'Percentile': [systolic_percentile, diastolic_percentile],
     'Type': ['Systolic BP', 'Diastolic BP']
 })
 
-# Create the Altair chart with adjusted margins
+# Altair chart with adjusted margins
 chart = alt.Chart(data).mark_point().encode(
     x=alt.X('Age:Q', title='Age (years)', scale=alt.Scale(domain=(0, 13))),
     y=alt.Y('Percentile:Q', title='Percentile', scale=alt.Scale(domain=(0, 100))),
@@ -31,17 +31,13 @@ chart = alt.Chart(data).mark_point().encode(
     tooltip=['Type', 'Percentile']
 ).properties(
     title='Blood Pressure Percentiles by Age',
-    width='container',  # Use container width
-    height=300  # Adjust height as needed
+    width='container',
+    height=300  # Adjust height to ensure space for the x-axis label
 ).configure_view(
-    strokeWidth=0,
-    continuousWidth=400,  # Adjust width as needed or use 'container' for dynamic resizing
-    continuousHeight=300  # Adjust height as needed
+    strokeWidth=0
 ).configure_axis(
-    labelFontSize=12,
-    titleFontSize=12
-).configure_axisX(
-    labelAngle=-45  # Adjust label angle to improve readability if necessary
+    labelPadding=10,  # Adds padding to the axis labels
+    titlePadding=10  # Adds padding to the axis titles
 )
 
 # Display the chart in Streamlit
