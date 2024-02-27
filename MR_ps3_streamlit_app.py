@@ -36,8 +36,8 @@ chart = alt.Chart(data).mark_point().encode(
 ).configure_view(
     strokeWidth=0
 ).configure_axis(
-    labelPadding=20,  # Adds padding to the axis labels
-    titlePadding=20  # Adds padding to the axis titles
+    labelPadding=5,  # Adds padding to the axis labels
+    titlePadding=  # Adds padding to the axis titles
 )
 
 # Display the chart in Streamlit
