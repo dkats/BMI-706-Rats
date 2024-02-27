@@ -14,7 +14,7 @@ diastolic_bp = st.number_input('Enter diastolic blood pressure (mmHg):', min_val
 
 # Placeholder values for the percentiles
 systolic_percentile = systolic_bp + age - height  # Example value
-diastolic_percentile = 56  # Example value
+diastolic_percentile = diastolic_bp + age - height # Example value
 
 # Data for the chart
 data = pd.DataFrame({
