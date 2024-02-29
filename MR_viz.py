@@ -23,6 +23,13 @@ data = pd.DataFrame({
     'Type': ['Systolic BP', 'Diastolic BP']
 })
 
+# NHANES data
+@st.cache_data
+def load_csv(file_path):
+    pd.read_csv(file_path)
+    return data
+# data = load_csv('nhanes/nhanes_clean.csv')
+
 # Define horizontal lines for the 50th, 90th, and 95th percentiles
 percentiles_df = pd.DataFrame({
     'Percentile': [50, 90, 95],
