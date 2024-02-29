@@ -1,14 +1,14 @@
 import altair as alt
 import pandas as pd
 import streamlit as st
-from rpy2.robjects import r, pandas2ri
+from rpy2.robjects import pandas2ri
 from rpy2.robjects.packages import importr
-from rpy2.robjects.conversion import localconverter
+import rpy2.robjects as robjects
 
-# Activate the automatic conversion of rpy2 objects to pandas objects
+# Ensure that rpy2's pandas2ri is activated to automatically convert r objects to pandas dataframes
 pandas2ri.activate()
 
-# Import the R package (assuming 'pedbp' as an example; replace with the actual package name)
+# Import the R package (replace 'pedbp' with the actual name of your package)
 pedbp = importr('pedbp')
 
 # Streamlit app setup
@@ -27,9 +27,9 @@ age_months = age_years * 12
 # Convert sex from string to binary indicator for male
 male = 1 if sex == 'Male' else 0
 
-# Call the R function from the R package
-with localconverter(r.default_converter + pandas2ri.converter):
-    result = pedbp.p_bp(q_sbp=systolic_bp, q_dbp=diastolic_bp, age=age_months, male=male, height=height)
+# Prepare the call to the R function
+r_function = robjects.r['p_bp']
+result = r_function(q_sbp=systolic_bp, q_dbp=diastolic_bp, age=age_months, male=male, height=height)
 
 # Extracting percentiles from the result
 sbp_percentile = result.rx('sbp_percentile')[0][0] * 100  # Multiply by 100 to convert to percentage
