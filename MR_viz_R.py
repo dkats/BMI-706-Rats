@@ -1,14 +1,16 @@
 import altair as alt
 import pandas as pd
 import streamlit as st
+from rpy2.robjects import R
+from rpy2.robjects.conversion import localconverter
 from rpy2.robjects import pandas2ri
 from rpy2.robjects.packages import importr
 import rpy2.robjects as robjects
 
-# Ensure that rpy2's pandas2ri is activated to automatically convert r objects to pandas dataframes
+# Ensure the automatic conversion is activated
 pandas2ri.activate()
 
-# Import the R package (replace 'pedbp' with the actual name of your package)
+# Import your R package here
 pedbp = importr('pedbp')
 
 # Streamlit app setup
@@ -27,17 +29,23 @@ age_months = age_years * 12
 # Convert sex from string to binary indicator for male
 male = 1 if sex == 'Male' else 0
 
-# Prepare the call to the R function
-r_function = robjects.r['p_bp']
-result = r_function(q_sbp=systolic_bp, q_dbp=diastolic_bp, age=age_months, male=male, height=height)
+# Define a function to call the R function safely within the conversion context
+def call_r_function(q_sbp, q_dbp, age, male, height):
+    with localconverter(R.default_converter + pandas2ri.converter):
+        result = robjects.r['p_bp'](q_sbp=q_sbp, q_dbp=q_dbp, age=age, male=male, height=height)
+    return result
 
-# Extracting percentiles from the result
-sbp_percentile = result.rx('sbp_percentile')[0][0] * 100  # Multiply by 100 to convert to percentage
-dbp_percentile = result.rx('dbp_percentile')[0][0] * 100  # Multiply by 100 to convert to percentage
+# Wrap the call to the R function in a try-except block to catch conversion errors
+try:
+    result = call_r_function(q_sbp=systolic_bp, q_dbp=diastolic_bp, age=age_months, male=male, height=height)
+    sbp_percentile = result.rx2('sbp_percentile')[0] * 100  # Convert to percentage
+    dbp_percentile = result.rx2('dbp_percentile')[0] * 100  # Convert to percentage
 
-# Display the calculated percentiles
-st.write(f"Systolic BP Percentile: {sbp_percentile:.2f}%")
-st.write(f"Diastolic BP Percentile: {dbp_percentile:.2f}%")
+    # Display the calculated percentiles
+    st.write(f"Systolic BP Percentile: {sbp_percentile:.2f}%")
+    st.write(f"Diastolic BP Percentile: {dbp_percentile:.2f}%")
+except Exception as e:
+    st.error(f"Failed to calculate percentiles: {e}")
 
 # Prepare data for the chart
 data = pd.DataFrame({
