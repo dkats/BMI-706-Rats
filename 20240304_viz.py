@@ -22,7 +22,7 @@ data = pd.DataFrame({
     'Percentile': [systolic_percentile, diastolic_percentile],
     'Type': ['Systolic BP', 'Diastolic BP'],
     'Blood Pressure Value': [systolic_bp, diastolic_bp],  # Include actual BP values here
-    'Blood Pressure Status': ['Normal BP' if x < 90 else ('Elevated BP' if x < 95 else 'Hypertension') for x in [systolic_percentile, diastolic_percentile]]
+    'Blood Pressure Status': ['Normal BP' if 50 <= x < 90 else ('Elevated BP' if x < 95 else 'Hypertension') for x in [systolic_percentile, diastolic_percentile]]
 })
 
 # Tooltip
