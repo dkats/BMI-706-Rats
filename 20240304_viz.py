@@ -23,18 +23,29 @@ data = pd.DataFrame({
     'Type': ['Systolic BP', 'Diastolic BP']
 })
 
-# Adding a calculated field for symbol based on conditions
+
+# Function to determine the symbol
 def get_symbol(percentile):
     if percentile >= 95:
-        return '!!'  # Two exclamation points for red
+        return '‼'  # Double exclamation mark (Unicode character)
     elif percentile >= 90:
-        return '!'   # One exclamation point for yellow
+        return '!'   # Single exclamation point
     elif percentile > 50:
-        return '✓'  # Checkmark for green
+        return '✔'  # Heavy check mark (Unicode character, more likely to be supported)
     else:
-        return ''    # No symbol for below 50th percentile
+        return '.'    # Placeholder for below 50th percentile
 
 data['Symbol'] = data['Percentile'].apply(get_symbol)
+
+# Adjust the symbols chart part
+symbols = alt.Chart(data).mark_text(
+    size=20,  # Adjust text size as needed
+).encode(
+    x=alt.X('Age:Q', title='Age (years)', axis=alt.Axis(values=list(range(14))), scale=alt.Scale(domain=(0, 13))),
+    y=alt.Y('Percentile:Q', title='Percentile', scale=alt.Scale(domain=(0, 100))),
+    text='Symbol:N',
+    tooltip=['Type', 'Percentile']
+)
 
 # Define horizontal lines for the 50th, 90th, and 95th percentiles
 percentiles_df = pd.DataFrame({
