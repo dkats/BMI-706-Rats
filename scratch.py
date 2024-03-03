@@ -20,8 +20,16 @@ diastolic_percentile = diastolic_bp + age - height # Example value
 data = pd.DataFrame({
     'Age': [age, age],
     'Percentile': [systolic_percentile, diastolic_percentile],
-    'Type': ['Systolic BP', 'Diastolic BP']
+    'Type': ['Systolic BP', 'Diastolic BP'],
+    'Blood Pressure Value': [systolic_bp, diastolic_bp]  # Include actual BP values here
 })
+
+# Tooltip
+tooltip_content = [
+    alt.Tooltip('Type:N', title='Blood Pressure Type'),
+    alt.Tooltip('Blood Pressure Value:Q', title='Blood Pressure Value'),  # Correctly reference BP values
+    alt.Tooltip('Percentile:Q', title='Percentile')
+]
 
 # Define horizontal lines for the 50th, 90th, and 95th percentiles
 percentiles_df = pd.DataFrame({
