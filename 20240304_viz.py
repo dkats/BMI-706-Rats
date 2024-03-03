@@ -16,49 +16,55 @@ diastolic_bp = st.number_input('Enter diastolic blood pressure (mmHg):', min_val
 systolic_percentile = systolic_bp + age - height  # Example value
 diastolic_percentile = diastolic_bp + age - height # Example value
 
-# Assuming you have separate percentile data for Systolic and Diastolic BP
-systolic_data = pd.DataFrame({
-    'Age': [age] * 14,  # Repeat the age for each percentile
-    'Percentile': list(range(50, 101)),  # Assuming you have percentiles from 50 to 100
-    'Type': ['Systolic BP'] * 51  # Label each row as 'Systolic BP'
+# Data for the chart
+data = pd.DataFrame({
+    'Age': [age, age],
+    'Percentile': [systolic_percentile, diastolic_percentile],
+    'Type': ['Systolic BP', 'Diastolic BP']
 })
 
-diastolic_data = pd.DataFrame({
-    'Age': [age] * 14,  # Repeat the age for each percentile
-    'Percentile': list(range(50, 101)),  # Assuming you have percentiles from 50 to 100
-    'Type': ['Diastolic BP'] * 51  # Label each row as 'Diastolic BP'
+# NHANES data
+@st.cache_data
+def load_csv(file_path):
+    pd.read_csv(file_path)
+    return data
+# data = load_csv('nhanes/nhanes_clean.csv')
+
+# Define horizontal lines for the 50th, 90th, and 95th percentiles
+percentiles_df = pd.DataFrame({
+    'Percentile': [50, 90, 95],
+    'Label': ['50th', '90th', '95th']
 })
 
-# Combine the systolic and diastolic data
-data = pd.concat([systolic_data, diastolic_data], ignore_index=True)
+percentile_lines = alt.Chart(percentiles_df).mark_rule(color='black', size=1.5).encode(  # Set size to control line thickness
+    y='Percentile:Q'
+)
+
+# Add labels for each percentile line
+percentile_labels = percentile_lines.mark_text(
+    align='right',
+    dx=-2,
+    dy=-5,
+    text='Label:N'
+).encode(
+    x=alt.value(344.5),
+    y='Percentile:Q',
+    text='Label:N'
+)
 
 # Base chart for points
 points = alt.Chart(data).mark_point().encode(
     x=alt.X('Age:Q', title='Age (years)', axis=alt.Axis(values=list(range(14))), scale=alt.Scale(domain=(0, 13))),
     y=alt.Y('Percentile:Q', title='Percentile', scale=alt.Scale(domain=(0, 100))),
-    color=alt.Color('Type:N', legend=alt.Legend(title=None), sort=['Systolic BP', 'Diastolic BP']),
+    color=alt.Color('Type:N', legend=alt.Legend(title=None), sort=['Systolic BP', 'Diastolic BP']),  # Set legend title to None
     tooltip=['Type', 'Percentile']
-)
-
-# Define filled areas for percentile ranges
-area_50_to_90 = alt.Chart(data.query('Percentile == 50')).mark_area(color='lightgreen', opacity=0.5).encode(
-    y='Percentile:Q',
-    y2=alt.value(90)  # The top of the area is the 90th percentile
-)
-
-area_90_to_95 = alt.Chart(data.query('Percentile == 90')).mark_area(color='lightyellow', opacity=0.5).encode(
-    y='Percentile:Q',
-    y2=alt.value(95)  # The top of the area is the 95th percentile
-)
-
-area_above_95 = alt.Chart(data.query('Percentile == 95')).mark_area(color='lightred', opacity=0.5).encode(
-    y='Percentile:Q',
-    y2=alt.value(100)  # The top of the area is the 100th percentile
 )
 
 # Combine all chart layers
 chart = alt.layer(
-    area_50_to_90, area_90_to_95, area_above_95, points
+    points, 
+    percentile_lines, 
+    percentile_labels
 ).properties(
     title='',
     width='container',
