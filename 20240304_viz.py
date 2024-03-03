@@ -16,25 +16,21 @@ diastolic_bp = st.number_input('Enter diastolic blood pressure (mmHg):', min_val
 systolic_percentile = systolic_bp + age - height  # Example value
 diastolic_percentile = diastolic_bp + age - height # Example value
 
-# Data for the chart
-data = pd.DataFrame({
-    'Age': list(range(0, 14)),  # We need to have a range for Age to create the area
-    'Percentile': [50] * 14  # Starting with the 50th percentile
+# Assuming you have separate percentile data for Systolic and Diastolic BP
+systolic_data = pd.DataFrame({
+    'Age': [age] * 14,  # Repeat the age for each percentile
+    'Percentile': list(range(50, 101)),  # Assuming you have percentiles from 50 to 100
+    'Type': ['Systolic BP'] * 51  # Label each row as 'Systolic BP'
 })
 
-# Add additional rows to data for the 90th and 95th percentiles
-additional_data = pd.concat([
-    pd.DataFrame({
-        'Age': list(range(0, 14)),
-        'Percentile': [90] * 14
-    }),
-    pd.DataFrame({
-        'Age': list(range(0, 14)),
-        'Percentile': [95] * 14
-    })
-], ignore_index=True)
+diastolic_data = pd.DataFrame({
+    'Age': [age] * 14,  # Repeat the age for each percentile
+    'Percentile': list(range(50, 101)),  # Assuming you have percentiles from 50 to 100
+    'Type': ['Diastolic BP'] * 51  # Label each row as 'Diastolic BP'
+})
 
-data = pd.concat([data, additional_data], ignore_index=True)
+# Combine the systolic and diastolic data
+data = pd.concat([systolic_data, diastolic_data], ignore_index=True)
 
 # Base chart for points
 points = alt.Chart(data).mark_point().encode(
