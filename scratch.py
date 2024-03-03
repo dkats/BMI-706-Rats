@@ -64,7 +64,7 @@ points = alt.Chart(data).mark_point(
     x=alt.X('Age:Q', title='Age (years)', axis=alt.Axis(values=list(range(14))), scale=alt.Scale(domain=(0, 13))),
     y=alt.Y('Percentile:Q', title='Percentile', scale=alt.Scale(domain=(0, 100))),
     color=alt.Color('Color:N', legend=alt.Legend(title='Percentile Color'), scale=None),  # Directly use the 'Color' field
-    tooltip=['Type', 'Percentile']
+    tooltip=tooltip_content  # Include 'Blood Pressure Value' in the tooltip
 )
 
 # Combine all chart layers
