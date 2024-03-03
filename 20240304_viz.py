@@ -9,8 +9,8 @@ st.title('Pediatric Blood Pressure Percentiles')
 sex = st.radio('Select sex:', ('Male', 'Female'))
 age = st.slider('Select age (years):', min_value=0, max_value=13, value=10)
 height = st.number_input('Enter height (cm):', min_value=0, value=50)
-systolic_bp = st.number_input('Enter systolic blood pressure (mmHg):', min_value=0, value=96)
-diastolic_bp = st.number_input('Enter diastolic blood pressure (mmHg):', min_value=0, value=60)
+systolic_bp = st.number_input('Enter systolic blood pressure (mmHg):')
+diastolic_bp = st.number_input('Enter diastolic blood pressure (mmHg):')
 
 # Placeholder values for the percentiles
 systolic_percentile = systolic_bp + age - height  # Example value
@@ -20,7 +20,8 @@ diastolic_percentile = diastolic_bp + age - height # Example value
 data = pd.DataFrame({
     'Age': [age, age],
     'Percentile': [systolic_percentile, diastolic_percentile],
-    'Type': ['Systolic BP', 'Diastolic BP']
+    'Type': ['Systolic BP', 'Diastolic BP'],
+    'Blood Pressure Value': [systolic_bp, diastolic_bp]  # Include actual BP values here
 })
 
 # Corrected function to determine the symbol based on percentile
@@ -37,10 +38,10 @@ def get_symbol(percentile):
 # Apply the corrected symbol logic to the DataFrame
 data['Symbol'] = data['Percentile'].apply(get_symbol)
 
-# Tooltip contents to include blood pressure values
+# Updated tooltip contents to include blood pressure values
 tooltip_content = [
     alt.Tooltip('Type:N', title='Blood Pressure Type'),
-    alt.Tooltip('Blood Pressure:Q', title='Blood Pressure Value'),  # Updated field name
+    alt.Tooltip('Blood Pressure Value:Q', title='Blood Pressure Value'),  # Correctly reference BP values
     alt.Tooltip('Percentile:Q', title='Percentile')
 ]
 
@@ -53,7 +54,7 @@ symbols = alt.Chart(data).mark_text(
     x=alt.X('Age:Q', title='Age (years)', scale=alt.Scale(domain=(0, 13)), axis=alt.Axis(tickCount=13)),
     y=alt.Y('Percentile:Q', title='Percentile'),
     text='Symbol:N',
-    tooltip=['Type:N', 'Percentile:Q']
+    tooltip=tooltip_content
 )
 
 # Chart for circular outlines
