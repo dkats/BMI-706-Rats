@@ -53,17 +53,19 @@ percentile_labels = percentile_lines.mark_text(
 )
 
 # Base chart for points
-points = alt.Chart(data).mark_point().encode(
+points = alt.Chart(data).mark_point(
+    color='black',  # Set the color of points to black
+    size=100  # Optional: you can adjust the size to your preference
+).encode(
     x=alt.X('Age:Q', title='Age (years)', axis=alt.Axis(values=list(range(14))), scale=alt.Scale(domain=(0, 13))),
     y=alt.Y('Percentile:Q', title='Percentile', scale=alt.Scale(domain=(0, 100))),
-    color=alt.Color('Type:N', legend=alt.Legend(title=None), sort=['Systolic BP', 'Diastolic BP']),  # Set legend title to None
     tooltip=['Type', 'Percentile']
 )
 
 # Combine all chart layers
 chart = alt.layer(
-    points, 
-    percentile_lines, 
+    points,
+    percentile_lines,
     percentile_labels
 ).properties(
     title='',
