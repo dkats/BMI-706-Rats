@@ -54,7 +54,7 @@ percentile_labels = percentile_lines.mark_text(
 )
 
 # Adding a calculated field for color based on conditions
-data['Color'] = data['Percentile'].apply(lambda x: 'darkred' if x >= 95 else 
+data['Color'] = data['Percentile'].apply(lambda x: 'maroon' if x >= 95 else 
                                          ('darkgoldenrod' if x >= 90 else 
                                           ('darkgreen' if x > 50 else 'darkblue')))
 
