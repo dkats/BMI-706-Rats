@@ -18,10 +18,16 @@ diastolic_percentile = diastolic_bp + age - height # Example value
 
 # Data for the chart
 data = pd.DataFrame({
-    'Age': [age, age],
-    'Percentile': [systolic_percentile, diastolic_percentile],
-    'Type': ['Systolic BP', 'Diastolic BP']
+    'Age': [age for i in range(100)],  # Generate data across the percentile range
+    'Percentile': list(range(1, 101)),  # 1st to 100th percentile
+    'Type': ['Systolic BP' if i < 50 else 'Diastolic BP' for i in range(100)]
 })
+
+# NHANES data placeholder function
+@st.cache
+def load_csv(file_path):
+    return pd.read_csv(file_path)
+# data = load_csv('nhanes/nhanes_clean.csv')
 
 # Define horizontal lines for the 50th, 90th, and 95th percentiles
 percentiles_df = pd.DataFrame({
@@ -40,7 +46,7 @@ percentile_labels = percentile_lines.mark_text(
     dy=-5,
     text='Label:N'
 ).encode(
-    x=alt.value(344.5),
+    x=alt.value(344.5),  # You may need to adjust this value
     y='Percentile:Q',
     text='Label:N'
 )
@@ -50,24 +56,26 @@ points = alt.Chart(data).mark_point(
     filled=True,
     size=100
 ).encode(
-    x=alt.X('Age:Q', title='Age (years)', axis=alt.Axis(values=list(range(14))), scale=alt.Scale(domain=(0, 13))),
-    y=alt.Y('Percentile:Q', title='Percentile', scale=alt.Scale(domain=(0, 100))),
-    color=alt.Color('Type:N', legend=alt.Legend(title=None), sort=['Systolic BP', 'Diastolic BP']),
+    x=alt.X('Age:Q', title='Age (years)'),
+    y=alt.Y('Percentile:Q', title='Percentile'),
+    color=alt.Color('Type:N', legend=alt.Legend(title=None)),
     tooltip=['Type', 'Percentile']
 )
 
-# Create an area chart for the area above the 50th percentile
-area_50th_percentile = alt.Chart(pd.DataFrame({'Percentile': [50, 100]})).mark_area(
-    color='green',
+# Creating an area chart to fill above the 50th percentile
+filled_area = alt.Chart(data).mark_area(
+    color="lightgreen",
     opacity=0.5
 ).encode(
-    y='Percentile:Q',
-    y2=alt.value(50)  # Base of the area (starting point)
+    x='Age:Q',
+    y='Percentile:Q'
+).transform_filter(
+    alt.datum.Percentile > 50  # This ensures we only fill above the 50th percentile
 )
 
 # Combine all chart layers
 chart = alt.layer(
-    area_50th_percentile, points, percentile_lines, percentile_labels
+    filled_area, points, percentile_lines, percentile_labels
 ).properties(
     title='',
     width='container',
