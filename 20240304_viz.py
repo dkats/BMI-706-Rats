@@ -37,7 +37,7 @@ symbols = alt.Chart(data).mark_text(
 
 # Chart for circular outlines
 circles = alt.Chart(data).mark_circle(
-    size=200,  # Adjust circle size as needed
+    size=250,  # Adjust circle size as needed
     color='white',  # No fill color for the circles
     stroke='black'  # Outline color
 ).encode(
