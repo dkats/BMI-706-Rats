@@ -24,12 +24,12 @@ data = pd.DataFrame({
     'Symbol': ['✔' if x > 50 else '!' for x in [systolic_percentile, diastolic_percentile]]
 })
 
-# Chart for symbols
+# Base chart for symbols with the corrected x-axis range and increments
 symbols = alt.Chart(data).mark_text(
     size=20,  # Adjust text size as needed
     fontSize=15,  # Adjust font size for better visibility and fitting within circles
 ).encode(
-    x=alt.X('Age:Q', title='Age (years)', scale=alt.Scale(domain=(age - 0.5, age + 0.5))),  # Narrow domain to fit single age
+    x=alt.X('Age:Q', title='Age (years)', scale=alt.Scale(domain=(0, 13)), axis=alt.Axis(values=list(range(14)))),
     y=alt.Y('Percentile:Q', title='Percentile'),
     text='Symbol:N',
     tooltip=['Type:N', 'Percentile:Q']
@@ -37,12 +37,12 @@ symbols = alt.Chart(data).mark_text(
 
 # Chart for circular outlines
 circles = alt.Chart(data).mark_circle(
-    size=5000,  # Adjust circle size as needed to fit the text
+    size=150,  # Adjust circle size as needed
     color='none',  # No fill color for the circles
-    stroke='black',  # Outline color
+    stroke='black'  # Outline color
 ).encode(
-    x='Age:Q',
-    y='Percentile:Q',
+    x=alt.X('Age:Q', scale=alt.Scale(domain=(0, 13)), axis=alt.Axis(values=list(range(14)))),
+    y=alt.Y('Percentile:Q')
 )
 
 # Combine symbols and circles
