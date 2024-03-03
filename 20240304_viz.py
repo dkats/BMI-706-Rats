@@ -45,23 +45,17 @@ percentile_labels = percentile_lines.mark_text(
     text='Label:N'
 )
 
-# Base chart for points with conditional coloring
+# Adding a calculated field for color based on conditions
+data['Color'] = data['Percentile'].apply(lambda x: 'red' if x >= 95 else ('yellow' if x >= 90 else ('green' if x > 50 else 'blue')))
+
+# Base chart for points with conditional coloring based on the new 'Color' field
 points = alt.Chart(data).mark_point(
     filled=True,
     size=100
 ).encode(
     x=alt.X('Age:Q', title='Age (years)', axis=alt.Axis(values=list(range(14))), scale=alt.Scale(domain=(0, 13))),
     y=alt.Y('Percentile:Q', title='Percentile', scale=alt.Scale(domain=(0, 100))),
-    color=alt.condition(
-        alt.datum.Percentile >= 95, alt.value('red'),
-        alt.condition(
-            (alt.datum.Percentile >= 90) & (alt.datum.Percentile < 95), alt.value('yellow'),
-            alt.condition(
-                (alt.datum.Percentile > 50) & (alt.datum.Percentile < 90), alt.value('green'),
-                alt.value('blue')  # Default color, for percentiles <= 50
-            )
-        )
-    ),
+    color=alt.Color('Color:N', legend=alt.Legend(title='Percentile Color'), scale=None),  # Directly use the 'Color' field
     tooltip=['Type', 'Percentile']
 )
 
