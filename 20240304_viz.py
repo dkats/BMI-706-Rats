@@ -23,28 +23,27 @@ data = pd.DataFrame({
     'Type': ['Systolic BP', 'Diastolic BP']
 })
 
-
 # Function to determine the symbol
-def get_symbol(percentile):
-    if percentile >= 95:
-        return '‼'  # Double exclamation mark (Unicode character)
-    elif percentile >= 90:
-        return '!'   # Single exclamation point
-    elif percentile > 50:
-        return '✔'  # Heavy check mark (Unicode character, more likely to be supported)
-    else:
-        return '.'    # Placeholder for below 50th percentile
+data['Symbol'] = data['Percentile'].apply(lambda x: '‼' if x >= 95 else ('!' if x >= 90 else ('✔' if x > 50 else '.')))
 
-data['Symbol'] = data['Percentile'].apply(get_symbol)
-
-# Adjust the symbols chart part
+# Chart for symbols
 symbols = alt.Chart(data).mark_text(
     size=20,  # Adjust text size as needed
 ).encode(
-    x=alt.X('Age:Q', title='Age (years)', axis=alt.Axis(values=list(range(14))), scale=alt.Scale(domain=(0, 13))),
-    y=alt.Y('Percentile:Q', title='Percentile', scale=alt.Scale(domain=(0, 100))),
+    x=alt.X('Age:Q', title='Age (years)'),
+    y=alt.Y('Percentile:Q', title='Percentile'),
     text='Symbol:N',
     tooltip=['Type', 'Percentile']
+)
+
+# Chart for circular outlines
+circles = alt.Chart(data).mark_circle(
+    size=150,  # Adjust circle size as needed
+    color='none',  # No fill color for the circles
+    stroke='black'  # Outline color
+).encode(
+    x=alt.X('Age:Q', title='Age (years)'),
+    y=alt.Y('Percentile:Q', title='Percentile'),
 )
 
 # Define horizontal lines for the 50th, 90th, and 95th percentiles
@@ -69,20 +68,11 @@ percentile_labels = percentile_lines.mark_text(
     text='Label:N'
 )
 
-# Base chart for symbols
-symbols = alt.Chart(data).mark_text(
-    size=20,  # Adjust text size as needed
-).encode(
-    x=alt.X('Age:Q', title='Age (years)', axis=alt.Axis(values=list(range(14))), scale=alt.Scale(domain=(0, 13))),
-    y=alt.Y('Percentile:Q', title='Percentile', scale=alt.Scale(domain=(0, 100))),
-    text='Symbol:N',
-    tooltip=['Type', 'Percentile']
-)
-
 # Combine all chart layers
 chart = alt.layer(
-    symbols, 
-    percentile_lines, 
+    circles,  # Circular outlines
+    symbols,  # Text symbols
+    percentile_lines,
     percentile_labels
 ).properties(
     title='',
