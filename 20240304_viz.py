@@ -9,8 +9,8 @@ st.title('Pediatric Blood Pressure Percentiles')
 sex = st.radio('Select sex:', ('Male', 'Female'))
 age = st.slider('Select age (years):', min_value=0, max_value=13, value=10)
 height = st.number_input('Enter height (cm):', min_value=0, value=50)
-systolic_bp = st.number_input('Enter systolic blood pressure (mmHg):', min_value=0, value=96)
-diastolic_bp = st.number_input('Enter diastolic blood pressure (mmHg):', min_value=0, value=60)
+systolic_bp = st.number_input('Enter systolic blood pressure (mmHg):')
+diastolic_bp = st.number_input('Enter diastolic blood pressure (mmHg):')
 
 # Placeholder values for the percentiles
 systolic_percentile = systolic_bp + age - height  # Example value
@@ -20,15 +20,55 @@ diastolic_percentile = diastolic_bp + age - height # Example value
 data = pd.DataFrame({
     'Age': [age, age],
     'Percentile': [systolic_percentile, diastolic_percentile],
-    'Type': ['Systolic BP', 'Diastolic BP']
+    'Type': ['Systolic BP', 'Diastolic BP'],
+    'Blood Pressure Value': [systolic_bp, diastolic_bp]  # Include actual BP values here
 })
 
-# NHANES data
-@st.cache_data
-def load_csv(file_path):
-    pd.read_csv(file_path)
-    return data
-# data = load_csv('nhanes/nhanes_clean.csv')
+# Corrected function to determine the symbol based on percentile
+def get_symbol(percentile):
+    if percentile >= 95:
+        return '‼'  # Two exclamation points for equal to or greater than 95th percentile
+    elif percentile >= 90:
+        return '!'   # One exclamation point for equal to or greater than 90th percentile
+    elif percentile > 50:
+        return '✔'  # Check mark for above 50th percentile
+    else:
+        return ''    # No symbol for 50th percentile or below
+
+# Apply the corrected symbol logic to the DataFrame
+data['Symbol'] = data['Percentile'].apply(get_symbol)
+
+# Updated tooltip contents to include blood pressure values
+tooltip_content = [
+    alt.Tooltip('Type:N', title='Blood Pressure Type'),
+    alt.Tooltip('Blood Pressure Value:Q', title='Blood Pressure Value'),  # Correctly reference BP values
+    alt.Tooltip('Percentile:Q', title='Percentile')
+]
+
+# Base chart for symbols with the corrected x-axis range and increments
+symbols = alt.Chart(data).mark_text(
+    size=20,  # Adjust text size as needed
+    fontSize=15,  # Adjust font size for better visibility and fitting within circles
+    color='black'  # Set the symbol color to black
+).encode(
+    x=alt.X('Age:Q', title='Age (years)', scale=alt.Scale(domain=(0, 13)), axis=alt.Axis(tickCount=13)),
+    y=alt.Y('Percentile:Q', title='Percentile'),
+    text='Symbol:N',
+    tooltip=tooltip_content
+)
+
+# Chart for circular outlines
+circles = alt.Chart(data).mark_circle(
+    size=300,  # Adjust circle size as needed
+    color='none',  # No fill color for the circles
+    stroke='black'  # Outline color
+).encode(
+    x=alt.X('Age:Q'),
+    y=alt.Y('Percentile:Q')
+)
+
+# Combine symbols and circles using alt.layer()
+combined = alt.layer(circles, symbols)
 
 # Define horizontal lines for the 50th, 90th, and 95th percentiles
 percentiles_df = pd.DataFrame({
@@ -36,7 +76,7 @@ percentiles_df = pd.DataFrame({
     'Label': ['50th', '90th', '95th']
 })
 
-percentile_lines = alt.Chart(percentiles_df).mark_rule(color='black', size=1.5).encode(  # Set size to control line thickness
+percentile_lines = alt.Chart(percentiles_df).mark_rule(color='black', size=1.5).encode(
     y='Percentile:Q'
 )
 
@@ -47,26 +87,14 @@ percentile_labels = percentile_lines.mark_text(
     dy=-5,
     text='Label:N'
 ).encode(
-    x=alt.value(344.5),
     y='Percentile:Q',
     text='Label:N'
 )
 
-# Base chart for points
-points = alt.Chart(data).mark_point(
-    filled=True,  # Ensure the dots are filled
-    size=100  # Optional: adjust the size to your preference
-).encode(
-    x=alt.X('Age:Q', title='Age (years)', axis=alt.Axis(values=list(range(14))), scale=alt.Scale(domain=(0, 13))),
-    y=alt.Y('Percentile:Q', title='Percentile', scale=alt.Scale(domain=(0, 100))),
-    color=alt.Color('Type:N', legend=alt.Legend(title=None), sort=['Systolic BP', 'Diastolic BP']),  # Keep the legend
-    tooltip=['Type', 'Percentile']
-)
-
 # Combine all chart layers
 chart = alt.layer(
-    points, 
-    percentile_lines, 
+    combined,  # Circles and symbols combined
+    percentile_lines,
     percentile_labels
 ).properties(
     title='',
@@ -74,10 +102,6 @@ chart = alt.layer(
     height=350
 ).configure_view(
     strokeWidth=0
-).configure_axis(
-    labelPadding=5,
-    titlePadding=5,
-    grid=False
 )
 
 # Display the chart in Streamlit
