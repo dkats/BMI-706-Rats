@@ -23,20 +23,13 @@ data = pd.DataFrame({
     'Type': ['Systolic BP', 'Diastolic BP']
 })
 
-# NHANES data
-@st.cache_data
-def load_csv(file_path):
-    pd.read_csv(file_path)
-    return data
-# data = load_csv('nhanes/nhanes_clean.csv')
-
 # Define horizontal lines for the 50th, 90th, and 95th percentiles
 percentiles_df = pd.DataFrame({
     'Percentile': [50, 90, 95],
     'Label': ['50th', '90th', '95th']
 })
 
-percentile_lines = alt.Chart(percentiles_df).mark_rule(color='black', size=1.5).encode(  # Set size to control line thickness
+percentile_lines = alt.Chart(percentiles_df).mark_rule(color='black', size=1.5).encode(
     y='Percentile:Q'
 )
 
@@ -52,14 +45,23 @@ percentile_labels = percentile_lines.mark_text(
     text='Label:N'
 )
 
-# Base chart for points
+# Base chart for points with conditional coloring
 points = alt.Chart(data).mark_point(
-    filled=True,  # Ensure the dots are filled
-    size=100  # Optional: adjust the size to your preference
+    filled=True,
+    size=100
 ).encode(
     x=alt.X('Age:Q', title='Age (years)', axis=alt.Axis(values=list(range(14))), scale=alt.Scale(domain=(0, 13))),
     y=alt.Y('Percentile:Q', title='Percentile', scale=alt.Scale(domain=(0, 100))),
-    color=alt.Color('Type:N', legend=alt.Legend(title=None), sort=['Systolic BP', 'Diastolic BP']),  # Keep the legend
+    color=alt.condition(
+        alt.datum.Percentile >= 95, alt.value('red'),
+        alt.condition(
+            (alt.datum.Percentile >= 90) & (alt.datum.Percentile < 95), alt.value('yellow'),
+            alt.condition(
+                (alt.datum.Percentile > 50) & (alt.datum.Percentile < 90), alt.value('green'),
+                alt.value('blue')  # Default color, for percentiles <= 50
+            )
+        )
+    ),
     tooltip=['Type', 'Percentile']
 )
 
