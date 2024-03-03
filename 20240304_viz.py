@@ -23,15 +23,18 @@ data = pd.DataFrame({
 })
 
 # Add additional rows to data for the 90th and 95th percentiles
-data = data.append(pd.DataFrame({
-    'Age': list(range(0, 14)),
-    'Percentile': [90] * 14
-}), ignore_index=True)
+additional_data = pd.concat([
+    pd.DataFrame({
+        'Age': list(range(0, 14)),
+        'Percentile': [90] * 14
+    }),
+    pd.DataFrame({
+        'Age': list(range(0, 14)),
+        'Percentile': [95] * 14
+    })
+], ignore_index=True)
 
-data = data.append(pd.DataFrame({
-    'Age': list(range(0, 14)),
-    'Percentile': [95] * 14
-}), ignore_index=True)
+data = pd.concat([data, additional_data], ignore_index=True)
 
 # Base chart for points
 points = alt.Chart(data).mark_point().encode(
