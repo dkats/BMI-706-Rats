@@ -1,5 +1,6 @@
 import altair as alt
 import pandas as pd
+import scipy.stats as stats
 import streamlit as st
 
 # Streamlit app setup
@@ -16,19 +17,56 @@ diastolic_bp = st.number_input('Enter diastolic blood pressure (mmHg):', min_val
 systolic_percentile = systolic_bp + age - height  # Example value
 diastolic_percentile = diastolic_bp + age - height # Example value
 
+# Load NHANES
+nhanes = pd.read_csv('nhanes/nhanes_clean.csv')
+nhanes_pedi = nhanes[nhanes['RIDAGEYR'] <= 13]
+nhanes_pedi['SEQN'] = [int(x) for x in nhanes_pedi['SEQN']]
+patient_id = st.selectbox('Select a patient (NHANES ID):', sorted(set(nhanes_pedi['SEQN'])))
+nhanes_pt = nhanes_pedi[nhanes_pedi['SEQN'] == patient_id]
+
 # Data for the chart
 data = pd.DataFrame({
-    'Age': [age, age],
-    'Percentile': [systolic_percentile, diastolic_percentile],
-    'Type': ['Systolic BP', 'Diastolic BP']
+    'Age': [item for item in nhanes_pt['RIDAGEYR'] for _ in range(2)],
+    'Sex': ['M' if int(item) == 1 else 'F' for item in nhanes_pt['RIAGENDR'] for _ in range(2)],
+    'Weight': [item for item in nhanes_pt['BMXWT'] for _ in range(2)],
+    'Height': [item for item in nhanes_pt['BMXHT'] for _ in range(2)],
+    'BP': nhanes_pt[['BPXSY1', 'BPXDI1']].values.flatten().tolist(),
+    'Type': [item for pair in [('Systolic BP', 'Diastolic BP') for _ in range(len(nhanes_pt))] for item in pair]
 })
 
-# NHANES data
-@st.cache_data
-def load_csv(file_path):
-    pd.read_csv(file_path)
-    return data
-# data = load_csv('nhanes/nhanes_clean.csv')
+# Calculate the percentile from the BP tables
+def calc_percentile(value, percentile_50, percentile_95):
+    sigma = (percentile_95 - percentile_50) / 1.645
+    return stats.norm.cdf((value - percentile_50) / sigma) * 100
+
+pertable_fd = pd.read_csv('bp-tables/FemaleDBP.csv')
+pertable_fs = pd.read_csv('bp-tables/FemaleSBP.csv')
+pertable_md = pd.read_csv('bp-tables/MaleDBP.csv')
+pertable_ms = pd.read_csv('bp-tables/MaleSBP.csv')
+for index, row in data.iterrows():
+    # Pick the right table
+    if row['Sex'] == 'M':
+        if row['Type'] == 'Systolic BP':
+            pertable = pertable_ms
+        elif row['Type'] == 'Diastolic BP':
+            pertable = pertable_md
+    elif row['Sex'] == 'F':
+        if row['Type'] == 'Systolic BP':
+            pertable = pertable_fs
+        elif row['Type'] == 'Diastolic BP':
+            pertable = pertable_fd
+    current_pertable = pertable[pertable['Age (y)'] == round(row['Age'])]
+    
+    # Get the appropriate column by finding the closest matching height
+    hts = current_pertable[current_pertable['Data'] == 'Height (cm)']
+    hts = hts.iloc[:,2:]
+    ht_col = abs(hts - row['Height']).stack().idxmin()[1]
+
+    # Calculate the percentile
+    bp_50 = current_pertable[current_pertable['Data'] == '50th'][ht_col].item()
+    bp_95 = current_pertable[current_pertable['Data'] == '95th'][ht_col].item()
+    bp_perc = calc_percentile(row['BP'], bp_50, bp_95)
+    data.at[index, 'Percentile'] = bp_perc
 
 # Define horizontal lines for the 50th, 90th, and 95th percentiles
 percentiles_df = pd.DataFrame({
@@ -57,7 +95,7 @@ points = alt.Chart(data).mark_point().encode(
     x=alt.X('Age:Q', title='Age (years)', axis=alt.Axis(values=list(range(14))), scale=alt.Scale(domain=(0, 13))),
     y=alt.Y('Percentile:Q', title='Percentile', scale=alt.Scale(domain=(0, 100))),
     color=alt.Color('Type:N', legend=alt.Legend(title=None), sort=['Systolic BP', 'Diastolic BP']),  # Set legend title to None
-    tooltip=['Type', 'Percentile']
+    tooltip=['Type', 'BP', alt.Tooltip('Percentile', format='.0f')]
 )
 
 # Combine all chart layers
