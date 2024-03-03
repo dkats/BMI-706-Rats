@@ -58,7 +58,7 @@ points = alt.Chart(data).mark_point(
 
 # Create an area chart for the area above the 50th percentile
 area_50th_percentile = alt.Chart(pd.DataFrame({'Percentile': [50, 100]})).mark_area(
-    color='lightgreen',
+    color='green',
     opacity=0.5
 ).encode(
     y='Percentile:Q',
