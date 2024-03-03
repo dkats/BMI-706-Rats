@@ -13,8 +13,8 @@ systolic_bp = st.number_input('Enter systolic blood pressure (mmHg):', min_value
 diastolic_bp = st.number_input('Enter diastolic blood pressure (mmHg):', min_value=0, value=60)
 
 # Placeholder values for the percentiles
-systolic_percentile = systolic_bp + age - height  # Example calculation
-diastolic_percentile = diastolic_bp + age - height # Example calculation
+systolic_percentile = systolic_bp + age - height  # Example value
+diastolic_percentile = diastolic_bp + age - height # Example value
 
 # Data for the chart
 data = pd.DataFrame({
@@ -23,16 +23,24 @@ data = pd.DataFrame({
     'Type': ['Systolic BP', 'Diastolic BP']
 })
 
+# NHANES data
+@st.cache_data
+def load_csv(file_path):
+    pd.read_csv(file_path)
+    return data
+# data = load_csv('nhanes/nhanes_clean.csv')
+
 # Define horizontal lines for the 50th, 90th, and 95th percentiles
 percentiles_df = pd.DataFrame({
     'Percentile': [50, 90, 95],
     'Label': ['50th', '90th', '95th']
 })
 
-percentile_lines = alt.Chart(percentiles_df).mark_rule(color='black', size=1.5).encode(
+percentile_lines = alt.Chart(percentiles_df).mark_rule(color='black', size=1.5).encode(  # Set size to control line thickness
     y='Percentile:Q'
 )
 
+# Add labels for each percentile line
 percentile_labels = percentile_lines.mark_text(
     align='right',
     dx=-2,
@@ -46,30 +54,20 @@ percentile_labels = percentile_lines.mark_text(
 
 # Base chart for points
 points = alt.Chart(data).mark_point(
-    filled=True,
-    size=100
+    filled=True,  # Ensure the dots are filled
+    size=100  # Optional: adjust the size to your preference
 ).encode(
-    x=alt.X('Age:Q', title='Age (years)'),
-    y=alt.Y('Percentile:Q', title='Percentile'),
-    color=alt.Color('Type:N', legend=alt.Legend(title=None)),
+    x=alt.X('Age:Q', title='Age (years)', axis=alt.Axis(values=list(range(14))), scale=alt.Scale(domain=(0, 13))),
+    y=alt.Y('Percentile:Q', title='Percentile', scale=alt.Scale(domain=(0, 100))),
+    color=alt.Color('Type:N', legend=alt.Legend(title=None), sort=['Systolic BP', 'Diastolic BP']),  # Keep the legend
     tooltip=['Type', 'Percentile']
 )
 
-# Correct approach to create an area above the 50th percentile
-# Assuming your data or background extends from 0 to 100 in the Percentile axis
-background = pd.DataFrame({'Percentile': [50, 100]})
-area_50th_percentile = alt.Chart(background).mark_area(
-    color='lightgreen',
-    opacity=0.5,
-    baseline='zero'
-).encode(
-    y='Percentile:Q',
-    y2=alt.value(50)  # Fill from this value up
-)
-
-# Combine all chart layers with the correct order
+# Combine all chart layers
 chart = alt.layer(
-    area_50th_percentile, points, percentile_lines, percentile_labels
+    points, 
+    percentile_lines, 
+    percentile_labels
 ).properties(
     title='',
     width='container',
@@ -84,4 +82,3 @@ chart = alt.layer(
 
 # Display the chart in Streamlit
 st.altair_chart(chart, use_container_width=True)
-
