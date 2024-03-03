@@ -28,9 +28,9 @@ data = pd.DataFrame({
 symbols = alt.Chart(data).mark_text(
     size=20,  # Adjust text size as needed
     fontSize=15,  # Adjust font size for better visibility and fitting within circles
-    color ='black'
+    color='black'  # Set the symbol color to black
 ).encode(
-    x=alt.X('Age:Q', title='Age (years)', scale=alt.Scale(domain=(0, 13)), axis=alt.Axis(values=list(range(14)))),
+    x=alt.X('Age:Q', title='Age (years)', scale=alt.Scale(domain=(0, 13)), axis=alt.Axis(tickCount=13)),
     y=alt.Y('Percentile:Q', title='Percentile'),
     text='Symbol:N',
     tooltip=['Type:N', 'Percentile:Q']
@@ -39,15 +39,15 @@ symbols = alt.Chart(data).mark_text(
 # Chart for circular outlines
 circles = alt.Chart(data).mark_circle(
     size=250,  # Adjust circle size as needed
-    color='white',  # No fill color for the circles
+    color='none',  # No fill color for the circles
     stroke='black'  # Outline color
 ).encode(
-    x=alt.X('Age:Q', scale=alt.Scale(domain=(0, 13)), axis=alt.Axis(values=list(range(14)))),
+    x=alt.X('Age:Q'),
     y=alt.Y('Percentile:Q')
 )
 
-# Combine symbols and circles
-combined = symbols + circles
+# Combine symbols and circles using alt.layer()
+combined = alt.layer(circles, symbols)
 
 # Define horizontal lines for the 50th, 90th, and 95th percentiles
 percentiles_df = pd.DataFrame({
