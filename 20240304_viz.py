@@ -37,10 +37,10 @@ def get_symbol(percentile):
 # Apply the corrected symbol logic to the DataFrame
 data['Symbol'] = data['Percentile'].apply(get_symbol)
 
-# Tooltip contents
+# Tooltip contents to include blood pressure values
 tooltip_content = [
     alt.Tooltip('Type:N', title='Blood Pressure Type'),
-    alt.Tooltip('BP:Q', title='Blood Pressure Value'),
+    alt.Tooltip('Blood Pressure:Q', title='Blood Pressure Value'),  # Updated field name
     alt.Tooltip('Percentile:Q', title='Percentile')
 ]
 
