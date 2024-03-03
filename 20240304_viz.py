@@ -28,6 +28,7 @@ data = pd.DataFrame({
 symbols = alt.Chart(data).mark_text(
     size=20,  # Adjust text size as needed
     fontSize=15,  # Adjust font size for better visibility and fitting within circles
+    color ='black'
 ).encode(
     x=alt.X('Age:Q', title='Age (years)', scale=alt.Scale(domain=(0, 13)), axis=alt.Axis(values=list(range(14)))),
     y=alt.Y('Percentile:Q', title='Percentile'),
