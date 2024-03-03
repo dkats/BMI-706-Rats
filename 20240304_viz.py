@@ -21,6 +21,13 @@ data = pd.DataFrame({
     'Age': [age, age],
     'Percentile': [systolic_percentile, diastolic_percentile],
     'Type': ['Systolic BP', 'Diastolic BP'],
+    'Blood Pressure Value': [systolic_bp, diastolic_bp]  # Include actual BP values here
+})
+
+data = pd.DataFrame({
+    'Age': [age, age],
+    'Percentile': [systolic_percentile, diastolic_percentile],
+    'Type': ['Systolic BP', 'Diastolic BP'],
     'Blood Pressure Value': [systolic_bp, diastolic_bp],  # Include actual BP values here
     'Blood Pressure Status': ['Normal BP' if x < 90 else ('Elevated BP' if x < 95 else 'Hypertension') for x in [systolic_percentile, diastolic_percentile]]
 })
@@ -31,6 +38,13 @@ tooltip_content = [
     alt.Tooltip('Blood Pressure Value:Q', title='Blood Pressure Value'),  # Correctly reference BP values
     alt.Tooltip('Percentile:Q', title='Percentile'),
     alt.Tooltip('Blood Pressure Status:N', title='Blood Pressure Status')
+]
+
+# Tooltip
+tooltip_content = [
+    alt.Tooltip('Type:N', title='Blood Pressure Type'),
+    alt.Tooltip('Blood Pressure Value:Q', title='Blood Pressure Value'),  # Correctly reference BP values
+    alt.Tooltip('Percentile:Q', title='Percentile')
 ]
 
 # Define horizontal lines for the 50th, 90th, and 95th percentiles
@@ -56,7 +70,9 @@ percentile_labels = percentile_lines.mark_text(
 )
 
 # Adding a calculated field for color based on conditions
-data['Color'] = data['Percentile'].apply(lambda x: 'darkred' if x >= 95 else ('darkgreen' if x >= 90 else 'blue'))
+data['Color'] = data['Percentile'].apply(lambda x: 'red' if x >= 95 else 
+                                         ('darkgoldenrod' if x >= 90 else 
+                                          ('darkgreen' if x > 50 else 'darkblue')))
 
 # Base chart for points with conditional coloring based on the new 'Color' field
 points = alt.Chart(data).mark_point(
