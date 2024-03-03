@@ -54,7 +54,9 @@ percentile_labels = percentile_lines.mark_text(
 )
 
 # Adding a calculated field for color based on conditions
-data['Color'] = data['Percentile'].apply(lambda x: 'red' if x >= 95 else ('yellow' if x >= 90 else ('green' if x > 50 else 'blue')))
+data['Color'] = data['Percentile'].apply(lambda x: 'red' if x >= 95 else 
+                                         ('darkgoldenrod' if x >= 90 else 
+                                          ('green' if x > 50 else 'blue')))
 
 # Base chart for points with conditional coloring based on the new 'Color' field
 points = alt.Chart(data).mark_point(
