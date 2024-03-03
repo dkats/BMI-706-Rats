@@ -33,13 +33,6 @@ tooltip_content = [
     alt.Tooltip('Blood Pressure Status:N', title='Blood Pressure Status'),
 ]
 
-tooltip_content = [
-    alt.Tooltip('Type:N', title='Blood Pressure Type'),
-    alt.Tooltip('Blood Pressure Value:Q', title='Blood Pressure', format=".2f"),  # Correctly reference BP values
-    alt.Tooltip('Percentile:Q', title='Percentile', format=".2f"),
-    alt.Tooltip('Blood Pressure Status:N', title='Blood Pressure Status')
-]
-
 # Define horizontal lines for the 50th, 90th, and 95th percentiles
 percentiles_df = pd.DataFrame({
     'Percentile': [50, 90, 95],
