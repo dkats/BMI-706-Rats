@@ -3,7 +3,7 @@ import pandas as pd
 import streamlit as st
 
 # Streamlit app setup
-st.title('Pediatric Blood Pressure Percentiles')
+st.title('Pediatric Blood Pressure Percentiles (0 - 13 years old)')
 
 # User inputs
 sex = st.radio('Select sex:', ('Male', 'Female'))
