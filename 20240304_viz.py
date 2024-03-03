@@ -23,12 +23,18 @@ data = pd.DataFrame({
     'Type': ['Systolic BP', 'Diastolic BP']
 })
 
-# NHANES data
-@st.cache_data
-def load_csv(file_path):
-    pd.read_csv(file_path)
-    return data
-# data = load_csv('nhanes/nhanes_clean.csv')
+# Adding a calculated field for symbol based on conditions
+def get_symbol(percentile):
+    if percentile >= 95:
+        return '!!'  # Two exclamation points for red
+    elif percentile >= 90:
+        return '!'   # One exclamation point for yellow
+    elif percentile > 50:
+        return '✓'  # Checkmark for green
+    else:
+        return ''    # No symbol for below 50th percentile
+
+data['Symbol'] = data['Percentile'].apply(get_symbol)
 
 # Define horizontal lines for the 50th, 90th, and 95th percentiles
 percentiles_df = pd.DataFrame({
@@ -36,7 +42,7 @@ percentiles_df = pd.DataFrame({
     'Label': ['50th', '90th', '95th']
 })
 
-percentile_lines = alt.Chart(percentiles_df).mark_rule(color='black', size=1.5).encode(  # Set size to control line thickness
+percentile_lines = alt.Chart(percentiles_df).mark_rule(color='black', size=1.5).encode(
     y='Percentile:Q'
 )
 
@@ -52,17 +58,19 @@ percentile_labels = percentile_lines.mark_text(
     text='Label:N'
 )
 
-# Base chart for points
-points = alt.Chart(data).mark_point().encode(
+# Base chart for symbols
+symbols = alt.Chart(data).mark_text(
+    size=20,  # Adjust text size as needed
+).encode(
     x=alt.X('Age:Q', title='Age (years)', axis=alt.Axis(values=list(range(14))), scale=alt.Scale(domain=(0, 13))),
     y=alt.Y('Percentile:Q', title='Percentile', scale=alt.Scale(domain=(0, 100))),
-    color=alt.Color('Type:N', legend=alt.Legend(title=None), sort=['Systolic BP', 'Diastolic BP']),  # Set legend title to None
+    text='Symbol:N',
     tooltip=['Type', 'Percentile']
 )
 
 # Combine all chart layers
 chart = alt.layer(
-    points, 
+    symbols, 
     percentile_lines, 
     percentile_labels
 ).properties(
