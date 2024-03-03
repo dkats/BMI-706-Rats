@@ -23,20 +23,13 @@ data = pd.DataFrame({
     'Type': ['Systolic BP', 'Diastolic BP']
 })
 
-# NHANES data
-@st.cache_data
-def load_csv(file_path):
-    pd.read_csv(file_path)
-    return data
-# data = load_csv('nhanes/nhanes_clean.csv')
-
 # Define horizontal lines for the 50th, 90th, and 95th percentiles
 percentiles_df = pd.DataFrame({
     'Percentile': [50, 90, 95],
     'Label': ['50th', '90th', '95th']
 })
 
-percentile_lines = alt.Chart(percentiles_df).mark_rule(color='black', size=1.5).encode(  # Set size to control line thickness
+percentile_lines = alt.Chart(percentiles_df).mark_rule(color='black', size=1.5).encode(
     y='Percentile:Q'
 )
 
@@ -54,20 +47,27 @@ percentile_labels = percentile_lines.mark_text(
 
 # Base chart for points
 points = alt.Chart(data).mark_point(
-    filled=True,  # Ensure the dots are filled
-    size=100  # Optional: adjust the size to your preference
+    filled=True,
+    size=100
 ).encode(
     x=alt.X('Age:Q', title='Age (years)', axis=alt.Axis(values=list(range(14))), scale=alt.Scale(domain=(0, 13))),
     y=alt.Y('Percentile:Q', title='Percentile', scale=alt.Scale(domain=(0, 100))),
-    color=alt.Color('Type:N', legend=alt.Legend(title=None), sort=['Systolic BP', 'Diastolic BP']),  # Keep the legend
+    color=alt.Color('Type:N', legend=alt.Legend(title=None), sort=['Systolic BP', 'Diastolic BP']),
     tooltip=['Type', 'Percentile']
+)
+
+# Create an area chart for the area above the 50th percentile
+area_50th_percentile = alt.Chart(pd.DataFrame({'Percentile': [50, 100]})).mark_area(
+    color='lightgreen',
+    opacity=0.5
+).encode(
+    y='Percentile:Q',
+    y2=alt.value(50)  # Base of the area (starting point)
 )
 
 # Combine all chart layers
 chart = alt.layer(
-    points, 
-    percentile_lines, 
-    percentile_labels
+    area_50th_percentile, points, percentile_lines, percentile_labels
 ).properties(
     title='',
     width='container',
