@@ -16,7 +16,7 @@ diastolic_bp = st.number_input('Enter diastolic blood pressure (mmHg):', min_val
 systolic_percentile = systolic_bp + age - height  # Example value
 diastolic_percentile = diastolic_bp + age - height # Example value
 
-# Data for the chart, initially without the 'Symbol' column
+# Data for the chart
 data = pd.DataFrame({
     'Age': [age, age],
     'Percentile': [systolic_percentile, diastolic_percentile],
@@ -36,6 +36,13 @@ def get_symbol(percentile):
 
 # Apply the corrected symbol logic to the DataFrame
 data['Symbol'] = data['Percentile'].apply(get_symbol)
+
+# Tooltip contents
+tooltip_content = [
+    alt.Tooltip('Type:N', title='Blood Pressure Type'),
+    alt.Tooltip('BP:Q', title='Blood Pressure Value'),
+    alt.Tooltip('Percentile:Q', title='Percentile')
+]
 
 # Base chart for symbols with the corrected x-axis range and increments
 symbols = alt.Chart(data).mark_text(
