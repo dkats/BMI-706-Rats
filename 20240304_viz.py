@@ -18,33 +18,35 @@ diastolic_percentile = diastolic_bp + age - height # Example value
 
 # Data for the chart
 data = pd.DataFrame({
-    'Age': [age, age],
+    'Age': [age, age],  # Adjust this if you need more granular control over age representation
     'Percentile': [systolic_percentile, diastolic_percentile],
-    'Type': ['Systolic BP', 'Diastolic BP']
+    'Type': ['Systolic BP', 'Diastolic BP'],
+    'Symbol': ['✔' if x > 50 else '!' for x in [systolic_percentile, diastolic_percentile]]
 })
-
-# Function to determine the symbol
-data['Symbol'] = data['Percentile'].apply(lambda x: '‼' if x >= 95 else ('!' if x >= 90 else ('✔' if x > 50 else '.')))
 
 # Chart for symbols
 symbols = alt.Chart(data).mark_text(
     size=20,  # Adjust text size as needed
+    fontSize=15,  # Adjust font size for better visibility and fitting within circles
 ).encode(
-    x=alt.X('Age:Q', title='Age (years)'),
+    x=alt.X('Age:Q', title='Age (years)', scale=alt.Scale(domain=(age - 0.5, age + 0.5))),  # Narrow domain to fit single age
     y=alt.Y('Percentile:Q', title='Percentile'),
     text='Symbol:N',
-    tooltip=['Type', 'Percentile']
+    tooltip=['Type:N', 'Percentile:Q']
 )
 
 # Chart for circular outlines
 circles = alt.Chart(data).mark_circle(
-    size=150,  # Adjust circle size as needed
+    size=5000,  # Adjust circle size as needed to fit the text
     color='none',  # No fill color for the circles
-    stroke='black'  # Outline color
+    stroke='black',  # Outline color
 ).encode(
-    x=alt.X('Age:Q', title='Age (years)'),
-    y=alt.Y('Percentile:Q', title='Percentile'),
+    x='Age:Q',
+    y='Percentile:Q',
 )
+
+# Combine symbols and circles
+combined = symbols + circles
 
 # Define horizontal lines for the 50th, 90th, and 95th percentiles
 percentiles_df = pd.DataFrame({
@@ -63,15 +65,13 @@ percentile_labels = percentile_lines.mark_text(
     dy=-5,
     text='Label:N'
 ).encode(
-    x=alt.value(344.5),
     y='Percentile:Q',
     text='Label:N'
 )
 
 # Combine all chart layers
 chart = alt.layer(
-    circles,  # Circular outlines
-    symbols,  # Text symbols
+    combined,  # Circles and symbols combined
     percentile_lines,
     percentile_labels
 ).properties(
@@ -80,10 +80,6 @@ chart = alt.layer(
     height=350
 ).configure_view(
     strokeWidth=0
-).configure_axis(
-    labelPadding=5,
-    titlePadding=5,
-    grid=False
 )
 
 # Display the chart in Streamlit
