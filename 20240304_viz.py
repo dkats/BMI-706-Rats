@@ -28,9 +28,8 @@ data = pd.DataFrame({
 # Tooltip
 tooltip_content = [
     alt.Tooltip('Type:N', title='Blood Pressure Type'),
-    alt.Tooltip('Blood Pressure Value:Q', title='Blood Pressure and Percentile',
-                format=".0f", formatType=".0f",
-                tooltip='Blood Pressure Value:Q / Percentile:Q'),
+    alt.Tooltip('Blood Pressure Value:Q', title='Blood Pressure Value'),  # Correctly reference BP values
+    alt.Tooltip('Percentile:Q', title='Percentile'),
     alt.Tooltip('Blood Pressure Status:N', title='Blood Pressure Status'),
 ]
 
