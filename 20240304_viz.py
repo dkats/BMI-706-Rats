@@ -40,7 +40,7 @@ symbols = alt.Chart(data).mark_text(
 circles = alt.Chart(data).mark_circle(
     size=250,  # Adjust circle size as needed
     color='white',  # No fill color for the circles
-    stroke='red'  # Outline color
+    stroke='black'  # Outline color
 ).encode(
     x=alt.X('Age:Q', scale=alt.Scale(domain=(0, 13)), axis=alt.Axis(values=list(range(14)))),
     y=alt.Y('Percentile:Q')
