@@ -13,8 +13,8 @@ systolic_bp = st.number_input('Enter systolic blood pressure (mmHg):', min_value
 diastolic_bp = st.number_input('Enter diastolic blood pressure (mmHg):', min_value=0, value=60)
 
 # Placeholder values for the percentiles
-systolic_percentile = systolic_bp + age - height  # Example value
-diastolic_percentile = diastolic_bp + age - height # Example value
+systolic_percentile = systolic_bp + age - height  # Example calculation
+diastolic_percentile = diastolic_bp + age - height # Example calculation
 
 # Data for the chart
 data = pd.DataFrame({
@@ -33,7 +33,6 @@ percentile_lines = alt.Chart(percentiles_df).mark_rule(color='black', size=1.5).
     y='Percentile:Q'
 )
 
-# Add labels for each percentile line
 percentile_labels = percentile_lines.mark_text(
     align='right',
     dx=-2,
@@ -50,22 +49,25 @@ points = alt.Chart(data).mark_point(
     filled=True,
     size=100
 ).encode(
-    x=alt.X('Age:Q', title='Age (years)', axis=alt.Axis(values=list(range(14))), scale=alt.Scale(domain=(0, 13))),
-    y=alt.Y('Percentile:Q', title='Percentile', scale=alt.Scale(domain=(0, 100))),
-    color=alt.Color('Type:N', legend=alt.Legend(title=None), sort=['Systolic BP', 'Diastolic BP']),
+    x=alt.X('Age:Q', title='Age (years)'),
+    y=alt.Y('Percentile:Q', title='Percentile'),
+    color=alt.Color('Type:N', legend=alt.Legend(title=None)),
     tooltip=['Type', 'Percentile']
 )
 
-# Create an area chart for the area above the 50th percentile
-area_50th_percentile = alt.Chart(pd.DataFrame({'Percentile': [50, 100]})).mark_area(
-    color='green',
-    opacity=0.5
+# Correct approach to create an area above the 50th percentile
+# Assuming your data or background extends from 0 to 100 in the Percentile axis
+background = pd.DataFrame({'Percentile': [50, 100]})
+area_50th_percentile = alt.Chart(background).mark_area(
+    color='lightgreen',
+    opacity=0.5,
+    baseline='zero'
 ).encode(
     y='Percentile:Q',
-    y2=alt.value(50)  # Base of the area (starting point)
+    y2=alt.value(50)  # Fill from this value up
 )
 
-# Combine all chart layers
+# Combine all chart layers with the correct order
 chart = alt.layer(
     area_50th_percentile, points, percentile_lines, percentile_labels
 ).properties(
@@ -82,3 +84,4 @@ chart = alt.layer(
 
 # Display the chart in Streamlit
 st.altair_chart(chart, use_container_width=True)
+
