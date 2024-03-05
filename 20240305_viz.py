@@ -22,7 +22,7 @@ nhanes = pd.read_csv('nhanes/nhanes_clean.csv')
 nhanes_pedi = nhanes[nhanes['RIDAGEYR'] <= 13]
 nhanes_pedi['SEQN'] = nhanes_pedi['SEQN'].astype(int)
 patient_id_options = ['Select a NHANES patient ID OR input values below'] + sorted(nhanes_pedi['SEQN'].unique().tolist())
-patient_id = st.selectbox('Select a patient (NHANES ID) OR input values below:', patient_id_options)
+patient_id = st.selectbox('Select a patient (NHANES ID):', patient_id_options)
 
 if patient_id == 'Select a NHANES patient ID OR input values below':
     # User inputs
