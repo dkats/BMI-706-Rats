@@ -115,7 +115,7 @@ percentile_labels = percentile_lines.mark_text(
 )
 
 # Adding a calculated field for color based on conditions
-data['Color'] = data['Percentile'].apply(lambda x: 'red' if x >= 95 else ('darkgoldenrod' if x >= 90 else ('darkgreen' if x > 50 else 'darkblue')))
+data['Color'] = data['Percentile'].apply(lambda x: 'red' if x >= 95 else ('darkgoldenrod' if x >= 90 else 'darkgreen'))
 
 # Base chart for points with conditional coloring based on the new 'Color' field
 points = alt.Chart(data).mark_point(
@@ -156,5 +156,5 @@ st.markdown("""
 |-----------------------|---------|
 | **Normal BP (<50th percentile)** | - No additional action is needed<br>- BP should be rechecked at the next routine well-child care visit |
 | **Elevated BP (≥90th to <95th percentile)** | - Lifestyle interventions (nutrition, sleep, physical activity) should be initiated<br>- BP should be rechecked by auscultatory measurement in 6 months<br>- If BP remains elevated at 6 months, check upper and lower extremity BP and repeat lifestyle measures<br>- If BP is still elevated after 12 months from initial measurement, order ambulatory blood pressure monitoring along with diagnostic evaluation, and consider subspecialty referral |
-| **Hypertension (≥95th percentile)** |- If symptomatic, refer to emergency department immediately for evaluation and treatment <br>- If asymptomatic, initiate lifestyle interventions<br>- BP should be rechecked by auscultatory measurement in 1-2 weeks<br>- If it remains classified as hypertension at 1-2 weeks, check upper and lower extremity BP, and recheck BP in 3 months by auscultation with consideration for nutrition/weight management referral<br>- If BP continues to be classified as hypertension after 3 visits, order ambulatory blood pressure monitoring along with diagnostic evaluation, and initiate treatment with consideration for subspecialty referral |
+| **Hypertension (≥95th** |- If symptomatic, refer to emergency department immediately for evaluation and treatment <br>- If asymptomatic, initiate lifestyle interventions<br>- BP should be rechecked by auscultatory measurement in 1-2 weeks<br>- If it remains classified as hypertension at 1-2 weeks, check upper and lower extremity BP, and recheck BP in 3 months by auscultation with consideration for nutrition/weight management referral<br>- If BP continues to be classified as hypertension after 3 visits, order ambulatory blood pressure monitoring along with diagnostic evaluation, and initiate treatment with consideration for subspecialty referral |
 """, unsafe_allow_html=True)    
