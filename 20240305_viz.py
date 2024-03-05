@@ -21,10 +21,10 @@ st.title('Pediatric Blood Pressure Percentiles')
 nhanes = pd.read_csv('nhanes/nhanes_clean.csv')
 nhanes_pedi = nhanes[nhanes['RIDAGEYR'] <= 13]
 nhanes_pedi['SEQN'] = nhanes_pedi['SEQN'].astype(int)
-patient_id_options = ['Select a NHANES patient ID OR input values below'] + sorted(nhanes_pedi['SEQN'].unique().tolist())
+patient_id_options = ['Select a patient OR input values below'] + sorted(nhanes_pedi['SEQN'].unique().tolist())
 patient_id = st.selectbox('Select a patient (NHANES ID):', patient_id_options)
 
-if patient_id == 'Select a NHANES patient ID OR input values below':
+if patient_id == 'Select a patient OR input values below':
     # User inputs
     sex = st.radio('Select sex:', ('Male', 'Female'))
     age = st.slider('Select age (years):', min_value=0, max_value=13, value=10)
