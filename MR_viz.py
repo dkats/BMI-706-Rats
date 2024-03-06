@@ -98,26 +98,40 @@ percentiles_df = pd.DataFrame({
     'Label': ['50th', '90th', '95th']
 })
 
-percentile_lines = alt.Chart(percentiles_df).mark_rule(color='black', size=1.5).encode(  # Set size to control line thickness
+# Adjusted definition for percentile lines without tooltip encoding
+percentile_lines = alt.Chart(percentiles_df).mark_rule(color='black', size=1.5).encode(
+    y='Percentile:Q'
+).properties(
+    tooltip=None  # This attempts to disable tooltips, but Altair might not directly support this property here.
+)
+
+# Add labels for each percentile line
+percentile_labels = percentile_lines.mark_text(
+    align='right',
+    dx=-2,
+    dy=-5,
+    text='Label:N'
+).encode(
+    x=alt.value(344.5),
     y='Percentile:Q',
-    tooltip=None
+    text='Label:N'
 )
 
 # Adding a calculated field for color based on conditions
 data['Color'] = data['Percentile'].apply(lambda x: 'red' if x >= 95 else ('darkgoldenrod' if x >= 90 else 'darkgreen'))
 
-# Base chart for points with conditional coloring based on the new 'Color' field
+# Keep your points definition as is, where tooltips are properly defined
 points = alt.Chart(data).mark_point(
     filled=True,
     size=100
 ).encode(
     x=alt.X('Age:Q', title='Age (years)', axis=alt.Axis(values=list(range(14))), scale=alt.Scale(domain=(0, 13))),
     y=alt.Y('Percentile:Q', title='Blood Pressure Percentile', scale=alt.Scale(domain=(0, 100))),
-    color=alt.Color('Color:N', legend=alt.Legend(title='Percentile Color'), scale=None),  # Directly use the 'Color' field
-    tooltip=tooltip_content 
+    color=alt.Color('Color:N', legend=alt.Legend(title='Percentile Color'), scale=None),
+    tooltip=tooltip_content  # Tooltips are applied here as intended
 )
 
-# Combine all chart layers
+# Combine all chart layers without applying global tooltips
 chart = alt.layer(
     points, 
     percentile_lines, 
