@@ -28,9 +28,9 @@ if patient_id == 'Select a patient OR input values below':
     # User inputs
     sex = st.radio('Select sex:', ('Male', 'Female'))
     age = st.slider('Select age (years):', min_value=0, max_value=13, value=10)
-    height = st.number_input('Enter height (cm):', format="%d")
-    systolic_bp = st.number_input('Enter systolic blood pressure (mmHg):', format="%d")
-    diastolic_bp = st.number_input('Enter diastolic blood pressure (mmHg):', format="%d")
+    height = st.number_input('Enter height (cm):', value=0, format="%d")
+    systolic_bp = st.number_input('Enter systolic blood pressure (mmHg):', value=0, format="%d")
+    diastolic_bp = st.number_input('Enter diastolic blood pressure (mmHg):', value=0, format="%d")
 
     # Create a DataFrame for user inputs
     data = pd.DataFrame({
