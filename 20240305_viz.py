@@ -86,10 +86,10 @@ for index, row in data.iterrows():
 
 # Tooltip
 tooltip_content = [
-    alt.Tooltip('Type:N', title='Blood Pressure Type'),
-    alt.Tooltip('Blood Pressure Value:Q', title='Blood Pressure Value'),  # Correctly reference BP values
+    alt.Tooltip('Type:N', title='Type'),
+    alt.Tooltip('Blood Pressure Value:Q', title='Value'),  # Correctly reference BP values
     alt.Tooltip('Percentile:Q', title='Percentile', format='.0f'),
-    alt.Tooltip('Blood Pressure Status:N', title='Blood Pressure Status'),
+    alt.Tooltip('Blood Pressure Status:N', title='Status'),
 ]
 
 # Define horizontal lines for the 50th, 90th, and 95th percentiles
