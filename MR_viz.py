@@ -74,6 +74,16 @@ for index, row in data.iterrows():
     bp_perc = calc_percentile(row['Blood Pressure Value'], bp_50, bp_95)
     data.at[index, 'Percentile'] = bp_perc
 
+   # Label the percentile
+    bp_label = ''
+    if bp_perc <= 90:
+        bp_label = 'Normal BP'
+    elif bp_perc <= 95:
+        bp_label = 'Elevated BP'
+    else:
+        bp_label = 'Hypertension'
+    data.at[index, 'Blood Pressure Status'] = bp_label
+
 # Tooltip
 tooltip_content = [
     alt.Tooltip('Type:N', title='Type'),
@@ -90,18 +100,6 @@ percentiles_df = pd.DataFrame({
 
 percentile_lines = alt.Chart(percentiles_df).mark_rule(color='black', size=1.5).encode(  # Set size to control line thickness
     y='Percentile:Q'
-)
-
-# Add labels for each percentile line
-percentile_labels = percentile_lines.mark_text(
-    align='right',
-    dx=-2,
-    dy=-5,
-    text='Label:N'
-).encode(
-    x=alt.value(344.5),
-    y='Percentile:Q',
-    text='Label:N'
 )
 
 # Adding a calculated field for color based on conditions
