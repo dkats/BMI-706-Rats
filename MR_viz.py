@@ -74,16 +74,6 @@ for index, row in data.iterrows():
     bp_perc = calc_percentile(row['Blood Pressure Value'], bp_50, bp_95)
     data.at[index, 'Percentile'] = bp_perc
 
-   # Label the percentile
-    bp_label = ''
-    if bp_perc <= 90:
-        bp_label = 'Normal BP'
-    elif bp_perc <= 95:
-        bp_label = 'Elevated BP'
-    else:
-        bp_label = 'Hypertension'
-    data.at[index, 'Blood Pressure Status'] = bp_label
-
 # Tooltip
 tooltip_content = [
     alt.Tooltip('Type:N', title='Type'),
@@ -125,7 +115,7 @@ points = alt.Chart(data).mark_point(
     x=alt.X('Age:Q', title='Age (years)', axis=alt.Axis(values=list(range(14))), scale=alt.Scale(domain=(0, 13))),
     y=alt.Y('Percentile:Q', title='Blood Pressure Percentile', scale=alt.Scale(domain=(0, 100))),
     color=alt.Color('Color:N', legend=alt.Legend(title='Percentile Color'), scale=None),  # Directly use the 'Color' field
-    tooltip=tooltip_content  # Include 'Blood Pressure Value' in the tooltip
+    tooltip=tooltip_content 
 )
 
 # Combine all chart layers
