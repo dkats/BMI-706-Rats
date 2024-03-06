@@ -15,7 +15,7 @@ pertable_md = pd.read_csv('bp-tables/MaleDBP.csv')
 pertable_ms = pd.read_csv('bp-tables/MaleSBP.csv')
 
 # Streamlit app setup
-st.title('Pediatric Blood Pressure Percentiles for Screening and Management of High Blood Pressure')
+st.title('Pediatric Blood Pressure Percentiles for Screening and Management of High Blood Pressure (0-13 years old)')
 
 # Load NHANES
 nhanes = pd.read_csv('nhanes/nhanes_clean.csv')
