@@ -99,7 +99,8 @@ percentiles_df = pd.DataFrame({
 })
 
 percentile_lines = alt.Chart(percentiles_df).mark_rule(color='black', size=1.5).encode(  # Set size to control line thickness
-    y='Percentile:Q'
+    y='Percentile:Q',
+    tooltip=None
 )
 
 # Adding a calculated field for color based on conditions
